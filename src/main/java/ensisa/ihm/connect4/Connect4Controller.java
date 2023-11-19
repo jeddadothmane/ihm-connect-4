@@ -24,8 +24,9 @@ import java.util.ResourceBundle;
 public class Connect4Controller implements Initializable {
 
     public Player player1 = new Player("",1,false);
-    public Player player2 = new Player("",2,false);
+    public Player player2= new Player("",2,false);;
     private Player currentPlayer = player1;
+    boolean isStartPanelLoaded =true;
     @FXML
     Button restart = new Button();
     @FXML
@@ -113,7 +114,9 @@ public class Connect4Controller implements Initializable {
         currentPlayer = player1;
         playerTurn.setText(player1.name + " turn");
 
-        // Clear the board
+        /**
+         * Clearing the board
+         */
         for (Node node : board.getChildren()) {
             if (node instanceof Circle) {
                 Circle circle = (Circle) node;
@@ -130,25 +133,25 @@ public class Connect4Controller implements Initializable {
     public void startGame(String player1Name, String player2Name) {
         player1.setName(player1Name);
         player2.setName(player2Name);
-
-        // Continue with the rest of your game setup
     }
 
     public void initialize(URL url, ResourceBundle rb) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("startPanel.fxml"));
-            Parent root = loader.load();
-            StartPanelController controller = loader.getController();
-            controller.setMainController(this);
+        if (!isStartPanelLoaded) {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("startPanel.fxml"));
+                Parent root = loader.load();
+                StartPanelController controller = loader.getController();
+                controller.setMainController(this);
 
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
+                Stage stage = new Stage();
+                stage.setScene(new Scene(root));
+                stage.show();
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
     }
-
-
-
 }

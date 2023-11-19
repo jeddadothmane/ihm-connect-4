@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import java.io.IOException;
 
@@ -28,6 +29,9 @@ public class StartPanelController {
     private ChoiceBox<String> playerTypeChoiceBox1;
     @FXML
     private ChoiceBox<String> playerTypeChoiceBox2;
+    @FXML
+    private AnchorPane startPanel;
+
 
     public void initialize() {
         playerTypeChoiceBox1.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -58,6 +62,9 @@ public class StartPanelController {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("main-view.fxml"));
                     Parent root = loader.load();
 
+                    /**
+                     * Setting some different values of Connect4Controller's attributes needed
+                     */
                     Connect4Controller newController = loader.getController();
                     newController.player1.setName(player1NameText);
                     newController.player2.setName(player2NameText);
@@ -66,6 +73,8 @@ public class StartPanelController {
                     newController.playerTurn.setText(player1NameText + " turn");
                     newController.player1Color.setText(player1NameText);
                     newController.player2Color.setText(player2NameText);
+                    newController.isStartPanelLoaded = true;
+
 
                     scene.setRoot(root);
                     newController.startGame(player1NameText, player2NameText);
@@ -73,12 +82,16 @@ public class StartPanelController {
                     /**
                      * Hide the starting panel
                      */
-                    Node startPanel = (Node) event.getSource();
-                    startPanel.getParent().setVisible(false);
+                    startPanel.setVisible(false);
+
+
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
+
+
     }
+
 }

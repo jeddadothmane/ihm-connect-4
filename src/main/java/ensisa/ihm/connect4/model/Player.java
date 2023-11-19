@@ -34,7 +34,4 @@ public class Player {
     public void setComputer(boolean computer) {
         this.computer = computer;
     }
-//    public Player() {
-//
-//    }
 }
