@@ -80,8 +80,11 @@
    <top>
       <Pane prefHeight="123.0" prefWidth="1480.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="restart" layoutX="141.0" layoutY="21.0" mnemonicParsing="false" onAction="#restartButtonHandler" prefHeight="43.0" prefWidth="139.0" text="New game" />
-            <Text fx:id="playerTurn" layoutX="358.0" layoutY="47.0" strokeType="OUTSIDE" strokeWidth="0.0" text="player 1 turn" />
+            <Button fx:id="restart" layoutX="141.0" layoutY="21.0" mnemonicParsing="false" onAction="#restartButtonHandler" prefHeight="43.0" prefWidth="139.0" text="Restart" />
+            <Text fx:id="playerTurn" layoutX="344.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="player 1 turn" wrappingWidth="129.18359375">
+               <font>
+                  <Font size="18.0" />
+               </font></Text>
             <HBox layoutX="-7.0" layoutY="86.0" prefHeight="50.0" prefWidth="1012.0">
                <children>
                   <Button fx:id="addToken0" mnemonicParsing="false" onAction="#addTokenButtonClick" prefHeight="25.0" prefWidth="150.0" text="Add token" />
@@ -95,12 +98,12 @@
             </HBox>
             <Circle fill="#eeff1f" layoutX="554.0" layoutY="27.0" radius="16.0" stroke="BLACK" strokeType="INSIDE" />
             <Circle fill="#ff1f1f" layoutX="554.0" layoutY="64.0" radius="16.0" stroke="BLACK" strokeType="INSIDE" />
-            <Text layoutX="590.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Player 1" wrappingWidth="81.7421875">
+            <Text fx:id="player1Color" layoutX="590.0" layoutY="32.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Player 1" wrappingWidth="81.7421875">
                <font>
                   <Font size="18.0" />
                </font>
             </Text>
-            <Text layoutX="590.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Player 2" wrappingWidth="81.7421875">
+            <Text fx:id="player2Color" layoutX="590.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Player 2" wrappingWidth="81.7421875">
                <font>
                   <Font size="18.0" />
                </font>

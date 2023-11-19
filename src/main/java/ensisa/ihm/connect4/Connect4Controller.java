@@ -3,8 +3,10 @@ package ensisa.ihm.connect4;
 import ensisa.ihm.connect4.model.Player;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -15,12 +17,14 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class Connect4Controller implements Initializable {
-    private Player player1 = new Player("",1,false);
-    private Player player2 = new Player("",2,false);
+
+    public Player player1 = new Player("",1,false);
+    public Player player2 = new Player("",2,false);
     private Player currentPlayer = player1;
     @FXML
     Button restart = new Button();
@@ -29,7 +33,9 @@ public class Connect4Controller implements Initializable {
     @FXML
     Button addToken0 = new Button();
     @FXML
-    private Text playerTurn;
+    public Text playerTurn;
+    @FXML
+    public Text player1Color, player2Color;
 
 
     /**
@@ -84,14 +90,17 @@ public class Connect4Controller implements Initializable {
          * filling the circle depending on the player
          */
         if (currentPlayer.id == 1) {
-            playerTurn.setText("Player 2 turn");
             lastEmptyCircle.setFill(Color.YELLOW);
             switchPlayer();
+            playerTurn.setText(player2.name + " turn");
+
         }
         else if (currentPlayer.id == 2){
-            playerTurn.setText("Player 1 turn");
             lastEmptyCircle.setFill(Color.RED);
             switchPlayer();
+            playerTurn.setText(player1.name + " turn");
+
+
         }
     }
 
@@ -102,7 +111,7 @@ public class Connect4Controller implements Initializable {
     @FXML
     public void restartButtonHandler(ActionEvent event){
         currentPlayer = player1;
-        playerTurn.setText("Player 1 turn");
+        playerTurn.setText(player1.name + " turn");
 
         // Clear the board
         for (Node node : board.getChildren()) {
@@ -118,8 +127,26 @@ public class Connect4Controller implements Initializable {
     public void switchPlayer() {
         currentPlayer = (currentPlayer == player1) ? player2 : player1;
     }
-    public void initialize(URL url, ResourceBundle rb) {
+    public void startGame(String player1Name, String player2Name) {
+        player1.setName(player1Name);
+        player2.setName(player2Name);
 
+        // Continue with the rest of your game setup
+    }
+
+    public void initialize(URL url, ResourceBundle rb) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("startPanel.fxml"));
+            Parent root = loader.load();
+            StartPanelController controller = loader.getController();
+            controller.setMainController(this);
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
