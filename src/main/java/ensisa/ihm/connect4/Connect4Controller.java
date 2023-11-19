@@ -12,6 +12,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -22,14 +23,19 @@ public class Connect4Controller implements Initializable {
     private Player player2 = new Player("",2,false);
     private Player currentPlayer = player1;
     @FXML
-    Button newGame = new Button();
+    Button restart = new Button();
     @FXML
     GridPane board = new GridPane();
     @FXML
     Button addToken0 = new Button();
+    @FXML
+    private Text playerTurn;
 
 
-
+    /**
+     * This function handles the adding of the circles in the board depending on the player
+     * @param event
+     */
     @FXML
     public void addTokenButtonClick(ActionEvent event) {
         Button clickedButton = (Button) event.getSource();
@@ -65,7 +71,6 @@ public class Connect4Controller implements Initializable {
         Circle lastEmptyCircle = null;
         for (int rowIndex = 5; rowIndex >= 0; rowIndex--) {
             Node node = board.getChildren().get(rowIndex + columnIndex*6);
-            System.out.println(rowIndex + columnIndex*6);
             if (node instanceof Circle) {
                 Circle circle = (Circle) node;
                 if (circle.getFill().equals(Color.web("#aeaeae"))) {
@@ -78,14 +83,36 @@ public class Connect4Controller implements Initializable {
         /**
          * filling the circle depending on the player
          */
-        if (currentPlayer.id == 1) {// Change the color of the last empty circle based on the current player
+        if (currentPlayer.id == 1) {
+            playerTurn.setText("Player 2 turn");
             lastEmptyCircle.setFill(Color.YELLOW);
             switchPlayer();
         }
         else if (currentPlayer.id == 2){
+            playerTurn.setText("Player 1 turn");
             lastEmptyCircle.setFill(Color.RED);
             switchPlayer();
         }
+    }
+
+    /**
+     * The function for handling the restart button
+     * @param event
+     */
+    @FXML
+    public void restartButtonHandler(ActionEvent event){
+        currentPlayer = player1;
+        playerTurn.setText("Player 1 turn");
+
+        // Clear the board
+        for (Node node : board.getChildren()) {
+            if (node instanceof Circle) {
+                Circle circle = (Circle) node;
+                circle.setFill(Color.web("#aeaeae"));
+            }
+        }
+
+        System.out.println("Restart");
     }
 
     public void switchPlayer() {
