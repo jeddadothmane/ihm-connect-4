@@ -5,19 +5,15 @@ public class Player {
     public int id;
     public  boolean computer;
 
+    public Player(){
+
+    };
     public Player(String name, int id, boolean computer) {
-        this.name = name;
         this.id = id;
         this.computer = computer;
     }
 
-    public String getName() {
-        return name;
-    }
 
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public int getId() {
         return id;
@@ -31,7 +27,7 @@ public class Player {
         return computer;
     }
 
-    public void setComputer(boolean computer) {
+    public void setIsComputer(boolean computer) {
         this.computer = computer;
     }
 }
