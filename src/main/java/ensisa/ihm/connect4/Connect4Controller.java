@@ -21,9 +21,10 @@ import java.util.ResourceBundle;
 public class Connect4Controller implements Initializable {
 
     public Player player1 = new Player("", 1, false);
-    public Player player2 = new Player("", 2, true);
+    public Player player2 = new Player("", 2, false);
     private Player currentPlayer = player1;
     private Timeline computerMoveTimeline;
+    private int numberTokens = 0;
     @FXML
     Button restart = new Button();
     @FXML
@@ -43,6 +44,7 @@ public class Connect4Controller implements Initializable {
      */
     @FXML
     public void addTokenButtonClick(ActionEvent event) {
+        numberTokens = numberTokens + 1;
         Button clickedButton = (Button) event.getSource();
         String buttonId = clickedButton.getId();
         int columnIndex = 0;
@@ -89,9 +91,17 @@ public class Connect4Controller implements Initializable {
                     }));
             computerMoveTimeline.setCycleCount(1);
             computerMoveTimeline.play();
+            if(numberTokens >= 4){
+                if (isWinner(currentPlayer)) {
+                    System.out.println(currentPlayer.name + " is the winner!");
+                }
+            }
         } catch (NullPointerException e) {
             System.out.println("This column is full");
         }
+        //System.out.println(numberTokens);
+
+
 
     }
 
@@ -179,6 +189,79 @@ public class Connect4Controller implements Initializable {
             System.out.println("Computer chose a full column. Choosing another column...");
             handleComputerMove();
         }
+    }
+
+    /**
+     * Check if the current player is a winner
+     *
+     * @param player The player to check for a win
+     * @return True if the player has won, false otherwise
+     */
+    private boolean isWinner(Player player) {
+        // Check horizontally
+        for (int row = 0; row < 6; row++) {
+            for (int col = 0; col < 4; col++) {
+                if (checkFourInARow(row, col, 0, 1, player)) {
+                    return true;
+                }
+            }
+        }
+
+        // Check vertically
+        for (int col = 0; col < 7; col++) {
+            for (int row = 0; row < 3; row++) {
+                if (checkFourInARow(row, col, 1, 0, player)) {
+                    return true;
+                }
+            }
+        }
+
+        // Check diagonally (top-left to bottom-right)
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 4; col++) {
+                if (checkFourInARow(row, col, 1, 1, player)) {
+                    return true;
+                }
+            }
+        }
+
+        // Check diagonally (bottom-left to top-right)
+        for (int row = 3; row < 6; row++) {
+            for (int col = 0; col < 4; col++) {
+                if (checkFourInARow(row, col, -1, 1, player)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if there are four circles in a row starting from a given position
+     *
+     * @param startRow    Starting row index
+     * @param startColumn Starting column index
+     * @param rowDelta    Row direction (1, 0, or -1)
+     * @param colDelta    Column direction (1, 0, or -1)
+     * @param player      The player to check for
+     * @return True if four circles in a row are found, false otherwise
+     */
+    private boolean checkFourInARow(int startRow, int startColumn, int rowDelta, int colDelta, Player player) {
+        for (int i = 0; i < 4; i++) {
+            int row = startRow + i * rowDelta;
+            int col = startColumn + i * colDelta;
+            Node node = board.getChildren().get(row + col * 6);
+            if (node instanceof Circle) {
+                Circle circle = (Circle) node;
+                if (!circle.getFill().equals(player.id == 1 ? Color.YELLOW : Color.RED)) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+        return true;
     }
 
 }
