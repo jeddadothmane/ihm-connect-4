@@ -44,7 +44,6 @@ public class Connect4Controller implements Initializable {
      */
     @FXML
     public void addTokenButtonClick(ActionEvent event) {
-        numberTokens = numberTokens + 1;
         Button clickedButton = (Button) event.getSource();
         String buttonId = clickedButton.getId();
         int columnIndex = 0;
@@ -82,7 +81,7 @@ public class Connect4Controller implements Initializable {
 
             // Schedule computer move after a delay (e.g., 1 second)
             computerMoveTimeline = new Timeline(new KeyFrame(
-                    Duration.seconds(0.1),
+                    Duration.seconds(0.5),
                     new EventHandler<ActionEvent>() {
                         @Override
                         public void handle(ActionEvent event) {
@@ -91,7 +90,7 @@ public class Connect4Controller implements Initializable {
                     }));
             computerMoveTimeline.setCycleCount(1);
             computerMoveTimeline.play();
-            if(numberTokens >= 4){
+            if (numberTokens >= 4) {
                 if (isWinner(currentPlayer)) {
                     System.out.println(currentPlayer.name + " is the winner!");
                 }
@@ -99,9 +98,8 @@ public class Connect4Controller implements Initializable {
         } catch (NullPointerException e) {
             System.out.println("This column is full");
         }
-        //System.out.println(numberTokens);
-
-
+        numberTokens = numberTokens + 1;
+        System.out.println(numberTokens);
 
     }
 
@@ -124,6 +122,7 @@ public class Connect4Controller implements Initializable {
                 circle.setFill(Color.web("#aeaeae"));
             }
         }
+        numberTokens = 0;
         System.out.println("Restart ckeck");
     }
 
@@ -139,6 +138,7 @@ public class Connect4Controller implements Initializable {
 
     /**
      * Finding the last available circle in a column
+     *
      * @param columnIndex
      * @return
      */
@@ -159,6 +159,7 @@ public class Connect4Controller implements Initializable {
 
     /**
      * This function is responsible for handling a player
+     *
      * @param lastEmptyCircle
      */
     private void handleHumanMove(Circle lastEmptyCircle) {
@@ -191,7 +192,7 @@ public class Connect4Controller implements Initializable {
         }
     }
 
-    /**
+    /*/**
      * Check if the current player is a winner
      *
      * @param player The player to check for a win
@@ -201,7 +202,7 @@ public class Connect4Controller implements Initializable {
         // Check horizontally
         for (int row = 0; row < 6; row++) {
             for (int col = 0; col < 4; col++) {
-                if (checkFourInARow(row, col, 0, 1, player)) {
+                if (checkFourInARow(col)) {
                     return true;
                 }
             }
@@ -210,7 +211,7 @@ public class Connect4Controller implements Initializable {
         // Check vertically
         for (int col = 0; col < 7; col++) {
             for (int row = 0; row < 3; row++) {
-                if (checkFourInARow(row, col, 1, 0, player)) {
+                if (checkFourInARow(col)) {
                     return true;
                 }
             }
@@ -219,7 +220,7 @@ public class Connect4Controller implements Initializable {
         // Check diagonally (top-left to bottom-right)
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 4; col++) {
-                if (checkFourInARow(row, col, 1, 1, player)) {
+                if (checkFourInARow(col)) {
                     return true;
                 }
             }
@@ -228,7 +229,7 @@ public class Connect4Controller implements Initializable {
         // Check diagonally (bottom-left to top-right)
         for (int row = 3; row < 6; row++) {
             for (int col = 0; col < 4; col++) {
-                if (checkFourInARow(row, col, -1, 1, player)) {
+                if (checkFourInARow(col)) {
                     return true;
                 }
             }
@@ -263,5 +264,29 @@ public class Connect4Controller implements Initializable {
         }
         return true;
     }
+
+    private boolean checkFourInARow(int columnIndex) {
+
+        int numberInRow = 1;
+        boolean fourInRow = false;
+        for (int rowIndex = 5; rowIndex >= 0; rowIndex--) {
+            Node node = board.getChildren().get(rowIndex + columnIndex * 6);
+            if (node instanceof Circle) {
+                Circle circle = (Circle) node;
+                if (circle.getFill().equals(Color.web("#aeaeae"))) {
+                    numberInRow++;
+                }
+            }
+        }
+        if (numberInRow == 4) {
+            fourInRow = true;
+            System.out.println("j'ai trouve 4 dans la meme colonne");
+        } else if (numberInRow > 4) {
+            fourInRow = false;
+        }
+
+        return fourInRow;
+    }
+
 
 }
