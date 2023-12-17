@@ -7,22 +7,30 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class Connect4Controller implements Initializable {
+public class Connect4Controller {
 
-    public Player player1 = new Player("", 1, false);
-    public Player player2 = new Player("", 2, false);
+    public Player player1 = new Player("Player 1", 1, Color.YELLOW, false);
+    public Player player2 = new Player("Player 2", 2, Color.RED, false);
     private Player currentPlayer = player1;
+    private boolean isHumanVsComputer = false;
+
     private Timeline computerMoveTimeline;
     private int numberTokens = 0;
     @FXML
@@ -36,6 +44,43 @@ public class Connect4Controller implements Initializable {
     @FXML
     public Text player1Color, player2Color;
 
+    /**
+     * Initializes the games
+     */
+    @FXML
+    public void initialize() {
+        showGameModePopup();
+    }
+
+    /**
+     * Shows the popup to choose the game mode
+     */
+    private void showGameModePopup() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Choose Game Mode");
+        alert.setHeaderText("Select the game mode");
+        alert.setContentText("Choose the game mode:");
+
+        ButtonType humanVsHumanButton = new ButtonType("Human vs Human");
+        ButtonType humanVsComputerButton = new ButtonType("Human vs Computer");
+        ButtonType cancelButton = new ButtonType("Cancel");
+
+        alert.getButtonTypes().setAll(humanVsHumanButton, humanVsComputerButton, cancelButton);
+
+        alert.initModality(Modality.APPLICATION_MODAL);
+
+        alert.showAndWait().ifPresent(buttonType -> {
+            if (buttonType == humanVsHumanButton) {
+                isHumanVsComputer = false;
+                player2.name = "Player 2";
+            } else if (buttonType == humanVsComputerButton) {
+                isHumanVsComputer = true;
+                player2.name = "Computer";
+            } else {
+                System.exit(0);
+            }
+        });
+    }
 
     /**
      * This function handles the adding of the circles in the board depending on the player
@@ -79,37 +124,135 @@ public class Connect4Controller implements Initializable {
         try {
             handleHumanMove(lastEmptyCircle);
 
-            // Schedule computer move after a delay (e.g., 1 second)
-            computerMoveTimeline = new Timeline(new KeyFrame(
-                    Duration.seconds(0.5),
-                    new EventHandler<ActionEvent>() {
-                        @Override
-                        public void handle(ActionEvent event) {
-                            handleComputerMove();
-                        }
-                    }));
-            computerMoveTimeline.setCycleCount(1);
-            computerMoveTimeline.play();
-            if (numberTokens >= 4) {
-                if (isWinner(currentPlayer)) {
-                    System.out.println(currentPlayer.name + " is the winner!");
-                }
+            if (isHumanVsComputer && !gameOver()) {
+                // Schedule computer move after a delay (e.g., 1 second)
+                computerMoveTimeline = new Timeline(new KeyFrame(
+                        Duration.seconds(0.5),
+                        new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent event) {
+                                handleComputerMove();
+                            }
+                        }));
+                computerMoveTimeline.setCycleCount(1);
+                computerMoveTimeline.play();
             }
+
         } catch (NullPointerException e) {
             System.out.println("This column is full");
         }
-        numberTokens = numberTokens + 1;
-        System.out.println(numberTokens);
 
+        if (isHumanVsComputer && isWinner(player2)) {
+            System.out.println(player2.name + " is the winner!");
+        } else if (!isHumanVsComputer && isWinner(player1)) {
+            System.out.println(player1.name + " is the winner!");
+        }
+        if (isWinner(currentPlayer)) {
+            System.out.println(currentPlayer.name + " is the winner!");
+        }
+        if(gameOver()){
+            System.out.println("Game Over !!");
+        };
     }
 
     /**
-     * The function for handling the restart button and clearing the board
+     * Checks if there are 4 circles of the same player in row
      *
-     * @param event
+     * @param player
+     * @param col
+     * @param row
+     * @param dCol
+     * @param dRow
+     * @return
+     */
+    private boolean checkFourInARow(Player player, int col, int row, int dCol, int dRow) {
+        int count = 1;
+        Color targetColor = player.color;
+
+        int curCol = col;
+        int curRow = row;
+
+        while ((curCol >= 0) && (curCol < 7) && (curRow >= 0) && (curRow < 6)) {
+            int index = (curCol * 6) + curRow;
+
+            Node node = board.getChildren().get(index);
+
+            if (node instanceof Circle) {
+                Circle circle = (Circle) node;
+                if (circle != null && circle.getFill().equals(targetColor)) {
+                    count++;
+                }
+
+                if (count > 4) {
+                    return true;
+                }
+            }
+            curCol += dCol;
+            curRow += dRow;
+        }
+        return false;
+    }
+
+    /**
+     * Checks if player is winner of the game
+     * @param player
+     * @return
+     */
+    private boolean isWinner(Player player) {
+        // Check rows
+        for (int row = 0; row < 7; row++) {
+            if (checkFourInARow(player, 0, row, 1, 0)) {
+                return true;
+            }
+        }
+
+        // Check columns
+        for (int col = 0; col < 7; col++) {
+            if (checkFourInARow(player, col, 0, 0, 1)) {
+                return true;
+            }
+
+        }
+
+        for (int ligne = 0; ligne < 7; ligne++) {
+            // Première diagonale ( / )
+            if (checkFourInARow(player, 0, ligne, 1, 1)) {
+                return true;
+            }
+            // Deuxième diagonale ( \ )
+            if (checkFourInARow(player, 6, ligne, -1, 1)) { // Updated to 6 for the last column
+                return true;
+            }
+        }
+        // Diagonales (cherche depuis les colonnes gauches et droites)
+        for (int ligne = 0; ligne < 7; ligne++) {
+            // Première diagonale ( / )
+            if (checkFourInARow(player, 0, ligne, 1, 1)) {
+                return true;
+            }
+            // Deuxième diagonale ( \ )
+            if (checkFourInARow(player, 7, ligne, -1, 1)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the board is full
+     * @return
+     */
+    private boolean isBoardFull() {
+        return numberTokens == 42;
+    }
+
+
+    /**
+     * The function for handling the restart button and clearing the board
      */
     @FXML
-    public void restartButtonHandler(ActionEvent event) {
+    public void restartButtonHandler() {
         currentPlayer = player1;
         playerTurn.setText(player1.name + " turn");
 
@@ -123,7 +266,8 @@ public class Connect4Controller implements Initializable {
             }
         }
         numberTokens = 0;
-        System.out.println("Restart ckeck");
+
+        System.out.println("Restart the game");
     }
 
     /**
@@ -133,8 +277,6 @@ public class Connect4Controller implements Initializable {
         currentPlayer = (currentPlayer == player1) ? player2 : player1;
     }
 
-    public void initialize(URL url, ResourceBundle rb) {
-    }
 
     /**
      * Finding the last available circle in a column
@@ -192,101 +334,47 @@ public class Connect4Controller implements Initializable {
         }
     }
 
-    /*/**
-     * Check if the current player is a winner
-     *
-     * @param player The player to check for a win
-     * @return True if the player has won, false otherwise
+    /**
+     * Shows the popup of the game over
+     * @param message
      */
-    private boolean isWinner(Player player) {
-        // Check horizontally
-        for (int row = 0; row < 6; row++) {
-            for (int col = 0; col < 4; col++) {
-                if (checkFourInARow(col)) {
-                    return true;
-                }
-            }
-        }
+    private void showGameOverPopup(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Game Over");
+        alert.setHeaderText(message);
+        alert.setContentText("Do you want to play again?");
 
-        // Check vertically
-        for (int col = 0; col < 7; col++) {
-            for (int row = 0; row < 3; row++) {
-                if (checkFourInARow(col)) {
-                    return true;
-                }
-            }
-        }
+        ButtonType playAgainButton = new ButtonType("Play Again");
+        ButtonType exitButton = new ButtonType("Exit");
 
-        // Check diagonally (top-left to bottom-right)
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 4; col++) {
-                if (checkFourInARow(col)) {
-                    return true;
-                }
-            }
-        }
+        alert.getButtonTypes().setAll(playAgainButton, exitButton);
 
-        // Check diagonally (bottom-left to top-right)
-        for (int row = 3; row < 6; row++) {
-            for (int col = 0; col < 4; col++) {
-                if (checkFourInARow(col)) {
-                    return true;
-                }
-            }
-        }
+        alert.initModality(Modality.APPLICATION_MODAL);
 
-        return false;
+        alert.showAndWait().ifPresent(buttonType -> {
+            if (buttonType == playAgainButton) {
+                restartButtonHandler();
+            } else {
+                System.exit(0);
+            }
+        });
     }
 
     /**
-     * Check if there are four circles in a row starting from a given position
-     *
-     * @param startRow    Starting row index
-     * @param startColumn Starting column index
-     * @param rowDelta    Row direction (1, 0, or -1)
-     * @param colDelta    Column direction (1, 0, or -1)
-     * @param player      The player to check for
-     * @return True if four circles in a row are found, false otherwise
+     * method to know if the game is over and show the popup of game over
+     * @return
      */
-    private boolean checkFourInARow(int startRow, int startColumn, int rowDelta, int colDelta, Player player) {
-        for (int i = 0; i < 4; i++) {
-            int row = startRow + i * rowDelta;
-            int col = startColumn + i * colDelta;
-            Node node = board.getChildren().get(row + col * 6);
-            if (node instanceof Circle) {
-                Circle circle = (Circle) node;
-                if (!circle.getFill().equals(player.id == 1 ? Color.YELLOW : Color.RED)) {
-                    return false;
-                }
-            } else {
-                return false;
-            }
+    private boolean gameOver() {
+        if (isWinner(player1)) {
+            showGameOverPopup(player1.name + " is the winner!");
+            return true;
+        } else if (isWinner(player2)) {
+            showGameOverPopup(player2.name + " is the winner!");
+            return true;
+        } else if (isBoardFull()) {
+            showGameOverPopup("It's a draw! The board is full.");
+            return true;
         }
-        return true;
+        return false;
     }
-
-    private boolean checkFourInARow(int columnIndex) {
-
-        int numberInRow = 1;
-        boolean fourInRow = false;
-        for (int rowIndex = 5; rowIndex >= 0; rowIndex--) {
-            Node node = board.getChildren().get(rowIndex + columnIndex * 6);
-            if (node instanceof Circle) {
-                Circle circle = (Circle) node;
-                if (circle.getFill().equals(Color.web("#aeaeae"))) {
-                    numberInRow++;
-                }
-            }
-        }
-        if (numberInRow == 4) {
-            fourInRow = true;
-            System.out.println("j'ai trouve 4 dans la meme colonne");
-        } else if (numberInRow > 4) {
-            fourInRow = false;
-        }
-
-        return fourInRow;
-    }
-
-
 }
