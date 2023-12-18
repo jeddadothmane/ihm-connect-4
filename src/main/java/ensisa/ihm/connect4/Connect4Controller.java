@@ -6,23 +6,18 @@ import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.geometry.HPos;
-import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.util.Duration;
 
-import java.net.URL;
-import java.util.ResourceBundle;
 
 public class Connect4Controller {
 
@@ -36,13 +31,16 @@ public class Connect4Controller {
     @FXML
     Button restart = new Button();
     @FXML
+    Button exit = new Button();
+
+    @FXML
     GridPane board = new GridPane();
     @FXML
     Button addToken0 = new Button();
     @FXML
     public Text playerTurn;
     @FXML
-    public Text player1Color, player2Color;
+    public Text player2Color;
 
     /**
      * Initializes the games
@@ -76,6 +74,7 @@ public class Connect4Controller {
             } else if (buttonType == humanVsComputerButton) {
                 isHumanVsComputer = true;
                 player2.name = "Computer";
+                player2Color.setText(player2.name);
             } else {
                 System.exit(0);
             }
@@ -214,24 +213,19 @@ public class Connect4Controller {
 
         }
 
-        for (int ligne = 0; ligne < 7; ligne++) {
-            // Première diagonale ( / )
-            if (checkFourInARow(player, 0, ligne, 1, 1)) {
+        for (int row = 0; row < 7; row++) {
+            if (checkFourInARow(player, 0, row, 1, 1)) {
                 return true;
             }
-            // Deuxième diagonale ( \ )
-            if (checkFourInARow(player, 6, ligne, -1, 1)) { // Updated to 6 for the last column
+            if (checkFourInARow(player, 6, row, -1, 1)) {
                 return true;
             }
         }
-        // Diagonales (cherche depuis les colonnes gauches et droites)
-        for (int ligne = 0; ligne < 7; ligne++) {
-            // Première diagonale ( / )
-            if (checkFourInARow(player, 0, ligne, 1, 1)) {
+        for (int row = 0; row < 7; row++) {
+            if (checkFourInARow(player, 0, row, 1, 1)) {
                 return true;
             }
-            // Deuxième diagonale ( \ )
-            if (checkFourInARow(player, 7, ligne, -1, 1)) {
+            if (checkFourInARow(player, 7, row, -1, 1)) {
                 return true;
             }
         }
@@ -249,7 +243,7 @@ public class Connect4Controller {
 
 
     /**
-     * The function for handling the restart button and clearing the board
+     * Handles the restart button and clearing the board
      */
     @FXML
     public void restartButtonHandler() {
@@ -268,6 +262,14 @@ public class Connect4Controller {
         numberTokens = 0;
 
         System.out.println("Restart the game");
+    }
+
+    /**
+     * Handles the cancel button and clearing the board
+     */
+    @FXML
+    public void cancelButtonHandler() {
+        showExitConfirmationDialog();
     }
 
     /**
@@ -377,4 +379,27 @@ public class Connect4Controller {
         }
         return false;
     }
+
+    /**
+     * The exit confirmation
+     */
+    private void showExitConfirmationDialog() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Exit Confirmation");
+        alert.setHeaderText("Are you sure you want to exit?");
+
+        ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+        ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.NO);
+
+        alert.getButtonTypes().setAll(yesButton, noButton);
+
+        alert.initModality(Modality.APPLICATION_MODAL);
+
+        alert.showAndWait().ifPresent(buttonType -> {
+            if (buttonType == yesButton) {
+                System.exit(0);
+            }
+        });
+    }
+
 }
