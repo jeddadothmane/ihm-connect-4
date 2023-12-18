@@ -138,10 +138,10 @@ public class Connect4Controller {
             }
 
         } catch (NullPointerException e) {
-            System.out.println("This column is full");
+            showAlert("Column Full", "This column is full. Choose another column.");
         }
 
-        if (isHumanVsComputer && isWinner(player2)) {
+         if (isHumanVsComputer && isWinner(player2)) {
             System.out.println(player2.name + " is the winner!");
         } else if (!isHumanVsComputer && isWinner(player1)) {
             System.out.println(player1.name + " is the winner!");
@@ -162,7 +162,7 @@ public class Connect4Controller {
      * @param row
      * @param dCol
      * @param dRow
-     * @return
+     *  @return
      */
     private boolean checkFourInARow(Player player, int col, int row, int dCol, int dRow) {
         int count = 1;
@@ -401,5 +401,14 @@ public class Connect4Controller {
             }
         });
     }
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.showAndWait();
+    }
+
 
 }
