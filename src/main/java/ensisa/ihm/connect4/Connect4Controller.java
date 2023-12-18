@@ -21,8 +21,8 @@ import javafx.util.Duration;
 
 public class Connect4Controller {
 
-    public Player player1 = new Player("Player 1", 1, Color.YELLOW, false);
-    public Player player2 = new Player("Player 2", 2, Color.RED, false);
+    public Player player1 = new Player("Player 1", 1, Color.YELLOW);
+    public Player player2 = new Player("Player 2", 2, Color.RED);
     private Player currentPlayer = player1;
     private boolean isHumanVsComputer = false;
 

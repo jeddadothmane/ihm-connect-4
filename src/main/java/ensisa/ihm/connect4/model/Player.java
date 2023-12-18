@@ -6,16 +6,14 @@ public class Player {
     public String name;
     public int id;
     public Color color;
-    public  boolean computer;
 
     public Player(){
 
     };
-    public Player(String name, int id, Color color, boolean computer) {
+    public Player(String name, int id, Color color) {
         this.name= name;
         this.id = id;
         this.color=color;
-        this.computer = computer;
     }
 
     public String getName() {
@@ -34,10 +32,6 @@ public class Player {
         this.color = color;
     }
 
-    public void setComputer(boolean computer) {
-        this.computer = computer;
-    }
-
     public int getId() {
         return id;
     }
@@ -46,11 +40,4 @@ public class Player {
         this.id = id;
     }
 
-    public boolean isComputer() {
-        return computer;
-    }
-
-    public void setIsComputer(boolean computer) {
-        this.computer = computer;
-    }
 }
