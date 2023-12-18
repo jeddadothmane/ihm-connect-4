@@ -41,6 +41,8 @@ public class Connect4Controller {
     public Text playerTurn;
     @FXML
     public Text player2Color;
+    @FXML
+    public Button help;
 
     /**
      * Initializes the games
@@ -272,6 +274,11 @@ public class Connect4Controller {
         showExitConfirmationDialog();
     }
 
+    @FXML
+    public void helpButtonHandler() {
+        showHelpDialog();
+    }
+
     /**
      * Allows to switch the current player
      */
@@ -410,5 +417,18 @@ public class Connect4Controller {
         alert.showAndWait();
     }
 
+    private void showHelpDialog() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Connect 4 Rules");
+        alert.setHeaderText(null);
+        alert.setContentText("Connect 4 is a game for two players. Each player picks " +
+                "a color and drops discs into a vertical grid with seven columns and six rows." +
+                " The goal is to connect four discs of your color in a row, either vertically, " +
+                "horizontally, or diagonally, before your opponent does." +
+                " Players take turns dropping discs from the top, " +
+                "and the discs fall down to the lowest available spot in the chosen column.");
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.showAndWait();
+    }
 
 }

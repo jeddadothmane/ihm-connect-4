@@ -80,8 +80,8 @@
    <top>
       <Pane prefHeight="123.0" prefWidth="1480.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="restart" layoutX="616.0" layoutY="25.0" mnemonicParsing="false" onAction="#restartButtonHandler" prefHeight="43.0" prefWidth="139.0" text="Restart" />
-            <Text fx:id="playerTurn" layoutX="155.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="player 1 turn" wrappingWidth="129.18359375">
+            <Button fx:id="restart" layoutX="671.0" layoutY="25.0" mnemonicParsing="false" onAction="#restartButtonHandler" prefHeight="43.0" prefWidth="139.0" text="Restart" />
+            <Text fx:id="playerTurn" layoutX="291.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="player 1 turn" wrappingWidth="129.18359375">
                <font>
                   <Font size="18.0" />
                </font></Text>
@@ -96,19 +96,20 @@
                   <Button fx:id="addToken6" mnemonicParsing="false" onAction="#addTokenButtonClick" prefHeight="25.0" prefWidth="141.0" text="Add token" />
                </children>
             </HBox>
-            <Circle fill="#eeff1f" layoutX="409.0" layoutY="24.0" radius="16.0" stroke="BLACK" strokeType="INSIDE" />
-            <Circle fill="#ff1f1f" layoutX="409.0" layoutY="61.0" radius="16.0" stroke="BLACK" strokeType="INSIDE" />
-            <Text fx:id="player1Color" layoutX="433.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Player 1" wrappingWidth="81.7421875">
+            <Circle fill="#eeff1f" layoutX="118.0" layoutY="22.0" radius="16.0" stroke="BLACK" strokeType="INSIDE" />
+            <Circle fill="#ff1f1f" layoutX="118.0" layoutY="59.0" radius="16.0" stroke="BLACK" strokeType="INSIDE" />
+            <Text fx:id="player1Color" layoutX="142.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Player 1" wrappingWidth="81.7421875">
                <font>
                   <Font size="18.0" />
                </font>
             </Text>
-            <Text fx:id="player2Color" layoutX="433.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Player 2" wrappingWidth="81.7421875">
+            <Text fx:id="player2Color" layoutX="142.0" layoutY="62.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Player 2" wrappingWidth="81.7421875">
                <font>
                   <Font size="18.0" />
                </font>
             </Text>
-            <Button fx:id="exit" layoutX="771.0" layoutY="25.0" mnemonicParsing="false" onAction="#cancelButtonHandler" prefHeight="43.0" prefWidth="139.0" text="Exit" />
+            <Button fx:id="exit" layoutX="831.0" layoutY="25.0" mnemonicParsing="false" onAction="#cancelButtonHandler" prefHeight="43.0" prefWidth="139.0" text="Exit" />
+            <Button fx:id="help" layoutX="510.0" layoutY="25.0" mnemonicParsing="false" onAction="#helpButtonHandler" prefHeight="43.0" prefWidth="139.0" text="Help" />
          </children>
       </Pane>
    </top>
