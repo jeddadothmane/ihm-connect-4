@@ -56,8 +56,7 @@ public class Connect4Controller {
     private void showGameModePopup() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Choose Game Mode");
-        alert.setHeaderText("Select the game mode");
-        alert.setContentText("Choose the game mode:");
+        alert.setHeaderText("Choose the game mode: ");
 
         ButtonType humanVsHumanButton = new ButtonType("Human vs Human");
         ButtonType humanVsComputerButton = new ButtonType("Human vs Computer");
@@ -247,21 +246,7 @@ public class Connect4Controller {
      */
     @FXML
     public void restartButtonHandler() {
-        currentPlayer = player1;
-        playerTurn.setText(player1.name + " turn");
-
-        /**
-         * Clearing the board
-         */
-        for (Node node : board.getChildren()) {
-            if (node instanceof Circle) {
-                Circle circle = (Circle) node;
-                circle.setFill(Color.web("#aeaeae"));
-            }
-        }
-        numberTokens = 0;
-
-        System.out.println("Restart the game");
+        showRestartConfirmation();
     }
 
     /**
@@ -439,6 +424,36 @@ public class Connect4Controller {
                 "and the discs fall down to the lowest available spot in the chosen column.");
         alert.initModality(Modality.APPLICATION_MODAL);
         alert.showAndWait();
+    }
+
+    private void showRestartConfirmation(){
+        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmationAlert.setTitle("Restart confirmation");
+        confirmationAlert.setContentText("Are you sur you want to restart ?");
+
+        ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+        ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.NO);
+
+        confirmationAlert.getButtonTypes().setAll(yesButton, noButton);
+
+        confirmationAlert.initModality(Modality.APPLICATION_MODAL);
+
+        confirmationAlert.showAndWait().ifPresent(buttonType -> {
+            if (buttonType == yesButton) {
+                currentPlayer = player1;
+                playerTurn.setText(player1.name + " turn");
+
+                for (Node node : board.getChildren()) {
+                    if (node instanceof Circle) {
+                        Circle circle = (Circle) node;
+                        circle.setFill(Color.web("#aeaeae"));
+                    }
+                }
+                numberTokens = 0;
+                System.out.println("Game restarted");
+            }
+        });
+
     }
 
 }
