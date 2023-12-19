@@ -51,33 +51,27 @@ public class Connect4Controller {
     }
 
     /**
-     * Shows the popup to choose the game mode
+     * Handles the restart button and clearing the board
      */
-    private void showGameModePopup() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Choose Game Mode");
-        alert.setHeaderText("Choose the game mode: ");
+    @FXML
+    public void restartButtonHandler() {
+        showRestartConfirmation();
+    }
 
-        ButtonType humanVsHumanButton = new ButtonType("Human vs Human");
-        ButtonType humanVsComputerButton = new ButtonType("Human vs Computer");
-        ButtonType cancelButton = new ButtonType("Cancel");
+    /**
+     * Handles the cancel button and clearing the board
+     */
+    @FXML
+    public void cancelButtonHandler() {
+        showExitConfirmationDialog();
+    }
 
-        alert.getButtonTypes().setAll(humanVsHumanButton, humanVsComputerButton, cancelButton);
-
-        alert.initModality(Modality.APPLICATION_MODAL);
-
-        alert.showAndWait().ifPresent(buttonType -> {
-            if (buttonType == humanVsHumanButton) {
-                isHumanVsComputer = false;
-                player2.name = "Player 2";
-            } else if (buttonType == humanVsComputerButton) {
-                isHumanVsComputer = true;
-                player2.name = "Computer";
-                player2Color.setText(player2.name);
-            } else {
-                System.exit(0);
-            }
-        });
+    /**
+     * Handles the help button
+     */
+    @FXML
+    public void helpButtonHandler() {
+        showHelpDialog();
     }
 
     /**
@@ -204,7 +198,6 @@ public class Connect4Controller {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -214,31 +207,6 @@ public class Connect4Controller {
      */
     private boolean isBoardFull() {
         return numberTokens == 42;
-    }
-
-
-    /**
-     * Handles the restart button and clearing the board
-     */
-    @FXML
-    public void restartButtonHandler() {
-        showRestartConfirmation();
-    }
-
-    /**
-     * Handles the cancel button and clearing the board
-     */
-    @FXML
-    public void cancelButtonHandler() {
-        showExitConfirmationDialog();
-    }
-
-    /**
-     * Handles the help button
-     */
-    @FXML
-    public void helpButtonHandler() {
-        showHelpDialog();
     }
 
     /**
@@ -305,6 +273,136 @@ public class Connect4Controller {
     }
 
     /**
+     * method to know if the game is over and to show the popup of game over
+     * @return true if the game is over, or false if it is not over yet
+     */
+    private boolean gameOver() {
+        if (isWinner(player1)) {
+            showGameOverPopup(player1.name + " is the winner!");
+            return true;
+        } else if (isWinner(player2)) {
+            showGameOverPopup(player2.name + " is the winner!");
+            return true;
+        } else if (isBoardFull()) {
+            showGameOverPopup("It's a draw! The board is full.");
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * The exit confirmation
+     */
+    private void showExitConfirmationDialog() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Exit");
+        alert.setHeaderText("Are you sure you want to exit?");
+
+        ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+        ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.NO);
+
+        alert.getButtonTypes().setAll(yesButton, noButton);
+
+        alert.initModality(Modality.APPLICATION_MODAL);
+
+        alert.showAndWait().ifPresent(buttonType -> {
+            if (buttonType == yesButton) {
+                System.exit(0);
+            }
+        });
+    }
+
+    /**
+     * Shows an alert with a title and a content
+     */
+    private void showColumnFullAlert() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Full column");
+        alert.setHeaderText(null);
+        alert.setContentText("This column is full. Choose another column.");
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.showAndWait();
+    }
+
+    /**
+     * Shows a popup that contains the rules of the connect4 game
+     */
+    private void showHelpDialog() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Help");
+        alert.setHeaderText(null);
+        alert.setContentText("Connect 4 is a game for two players. Each player picks " +
+                "a color and drops discs into a vertical grid with seven columns and six rows." +
+                " The goal is to connect four discs of your color in a row, either vertically, " +
+                "horizontally, or diagonally, before your opponent does.\n" +
+                "Players take turns dropping discs from the top, " +
+                "and the discs fall down to the lowest available spot in the chosen column.");
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.showAndWait();
+    }
+    /**
+     * Shows the popup to choose the game mode
+     */
+    private void showGameModePopup() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Choose Game Mode");
+        alert.setHeaderText("Choose the game mode: ");
+
+        ButtonType humanVsHumanButton = new ButtonType("Human vs Human");
+        ButtonType humanVsComputerButton = new ButtonType("Human vs Computer");
+        ButtonType cancelButton = new ButtonType("Cancel");
+
+        alert.getButtonTypes().setAll(humanVsHumanButton, humanVsComputerButton, cancelButton);
+
+        alert.initModality(Modality.APPLICATION_MODAL);
+
+        alert.showAndWait().ifPresent(buttonType -> {
+            if (buttonType == humanVsHumanButton) {
+                isHumanVsComputer = false;
+                player2.name = "Player 2";
+            } else if (buttonType == humanVsComputerButton) {
+                isHumanVsComputer = true;
+                player2.name = "Computer";
+                player2Color.setText(player2.name);
+            } else {
+                System.exit(0);
+            }
+        });
+    }
+
+    /**
+     * Shows the popup of the confirmation of restarting a game
+     */
+    private void showRestartConfirmation(){
+        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmationAlert.setTitle("Restart");
+        confirmationAlert.setContentText("Are you sure you want to restart ?");
+
+        ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+        ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.NO);
+
+        confirmationAlert.getButtonTypes().setAll(yesButton, noButton);
+
+        confirmationAlert.initModality(Modality.APPLICATION_MODAL);
+
+        confirmationAlert.showAndWait().ifPresent(buttonType -> {
+            if (buttonType == yesButton) {
+                currentPlayer = player1;
+                playerTurn.setText(player1.name + " turn");
+
+                for (Node node : board.getChildren()) {
+                    if (node instanceof Circle circle) {
+                        circle.setFill(Color.web("#aeaeae"));
+                    }
+                }
+                numberTokens = 0;
+                System.out.println("Game restarted");
+            }
+        });
+
+    }
+
+    /**
      * Shows the popup of the game over
      * @param message the message to print if the game is over
      */
@@ -340,105 +438,5 @@ public class Connect4Controller {
         });
     }
 
-    /**
-     * method to know if the game is over and to show the popup of game over
-     * @return true if the game is over, or false if it is not over yet
-     */
-    private boolean gameOver() {
-        if (isWinner(player1)) {
-            showGameOverPopup(player1.name + " is the winner!");
-            return true;
-        } else if (isWinner(player2)) {
-            showGameOverPopup(player2.name + " is the winner!");
-            return true;
-        } else if (isBoardFull()) {
-            showGameOverPopup("It's a draw! The board is full.");
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * The exit confirmation
-     */
-    private void showExitConfirmationDialog() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Exit Confirmation");
-        alert.setHeaderText("Are you sure you want to exit?");
-
-        ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
-        ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.NO);
-
-        alert.getButtonTypes().setAll(yesButton, noButton);
-
-        alert.initModality(Modality.APPLICATION_MODAL);
-
-        alert.showAndWait().ifPresent(buttonType -> {
-            if (buttonType == yesButton) {
-                System.exit(0);
-            }
-        });
-    }
-
-    /**
-     * Shows an alert with a title and a content
-     */
-    private void showColumnFullAlert() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Full column");
-        alert.setHeaderText(null);
-        alert.setContentText("This column is full. Choose another column.");
-        alert.initModality(Modality.APPLICATION_MODAL);
-        alert.showAndWait();
-    }
-
-    /**
-     * Shows a popup that contains the rules of the connect4 game
-     */
-    private void showHelpDialog() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Connect 4 Rules");
-        alert.setHeaderText(null);
-        alert.setContentText("Connect 4 is a game for two players. Each player picks " +
-                "a color and drops discs into a vertical grid with seven columns and six rows." +
-                " The goal is to connect four discs of your color in a row, either vertically, " +
-                "horizontally, or diagonally, before your opponent does.\n" +
-                "Players take turns dropping discs from the top, " +
-                "and the discs fall down to the lowest available spot in the chosen column.");
-        alert.initModality(Modality.APPLICATION_MODAL);
-        alert.showAndWait();
-    }
-
-    /**
-     * Shows the popup of the confirmation of restarting a game
-     */
-    private void showRestartConfirmation(){
-        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmationAlert.setTitle("Restart confirmation");
-        confirmationAlert.setContentText("Are you sure you want to restart ?");
-
-        ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
-        ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.NO);
-
-        confirmationAlert.getButtonTypes().setAll(yesButton, noButton);
-
-        confirmationAlert.initModality(Modality.APPLICATION_MODAL);
-
-        confirmationAlert.showAndWait().ifPresent(buttonType -> {
-            if (buttonType == yesButton) {
-                currentPlayer = player1;
-                playerTurn.setText(player1.name + " turn");
-
-                for (Node node : board.getChildren()) {
-                    if (node instanceof Circle circle) {
-                        circle.setFill(Color.web("#aeaeae"));
-                    }
-                }
-                numberTokens = 0;
-                System.out.println("Game restarted");
-            }
-        });
-
-    }
 
 }
