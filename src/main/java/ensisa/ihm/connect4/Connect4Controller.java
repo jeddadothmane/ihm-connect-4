@@ -134,7 +134,7 @@ public class Connect4Controller {
      *  @return true if the player has 4 in row, else false
      */
     private boolean checkFourInARow(Player player, int col, int row, int dCol, int dRow) {
-        int count = 1;
+        int consecutiveCount = 1;
         Color targetColor = player.color;
 
         int curCol = col;
@@ -147,10 +147,12 @@ public class Connect4Controller {
 
             if (node instanceof Circle circle) {
                 if (circle.getFill().equals(targetColor)) {
-                    count++;
+                    consecutiveCount++;
+                } else {
+                    consecutiveCount = 1;
                 }
 
-                if (count > 4) {
+                if (consecutiveCount > 4) {
                     return true;
                 }
             }
