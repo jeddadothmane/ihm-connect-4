@@ -27,6 +27,8 @@ Nous avons ajouté un en-tête contenant les informations nécessaires pour le j
 
 Des fenêtres contextuelles informatives ont également été intégrées, fournissant à chaque fois des informations utiles à l'utilisateur en fonction du contexte.
 
-![img_3.png](images/img_3.png)
-![img_4.png](images/img_4.png)
+![img_3.png](images/img_3.png)\
+
+![img_4.png](images/img_4.png)\
+
 ![img_5.png](images/img_5.png)
