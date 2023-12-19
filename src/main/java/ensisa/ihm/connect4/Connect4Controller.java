@@ -2,9 +2,9 @@ package ensisa.ihm.connect4;
 
 import ensisa.ihm.connect4.model.Player;
 import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -83,64 +83,40 @@ public class Connect4Controller {
     /**
      * This function handles the adding of the circles in the board depending on the player
      *
-     * @param event
+     * @param event event
      */
     @FXML
     public void addTokenButtonClick(ActionEvent event) {
         Button clickedButton = (Button) event.getSource();
         String buttonId = clickedButton.getId();
-        int columnIndex = 0;
-        switch (buttonId) {
-            case "addToken0":
-                columnIndex = 0;
-                break;
-            case "addToken1":
-                columnIndex = 1;
-                break;
-            case "addToken2":
-                columnIndex = 2;
-                break;
-            case "addToken3":
-                columnIndex = 3;
-                break;
-            case "addToken4":
-                columnIndex = 4;
-                break;
-            case "addToken5":
-                columnIndex = 5;
-                break;
-            case "addToken6":
-                columnIndex = 6;
-                break;
-        }
+        int columnIndex = Integer.parseInt(buttonId.replace("addToken", ""));
 
-        /**
-         * find the last empty circle in a column
-         */
         Circle lastEmptyCircle = findLastEmptyCircle(columnIndex);
 
         try {
+            lastEmptyCircle.setFill(Color.DARKGRAY);
+
+            Timeline colorTransitionTimeline = new Timeline(
+                    new KeyFrame(Duration.seconds(0.2), new KeyValue(lastEmptyCircle.fillProperty(), currentPlayer.color))
+            );
+            colorTransitionTimeline.play();
+
             handleHumanMove(lastEmptyCircle);
 
             if (isHumanVsComputer && !gameOver()) {
-                // Schedule computer move after a delay (e.g., 1 second)
                 Timeline computerMoveTimeline = new Timeline(new KeyFrame(
                         Duration.seconds(0.5),
-                        new EventHandler<ActionEvent>() {
-                            @Override
-                            public void handle(ActionEvent event) {
-                                handleComputerMove();
-                            }
-                        }));
+                        event1 -> handleComputerMove()
+                ));
                 computerMoveTimeline.setCycleCount(1);
                 computerMoveTimeline.play();
             }
 
         } catch (NullPointerException e) {
-            showAlert("Column Full", "This column is full. Choose another column.");
+            showColumnFullAlert();
         }
 
-         if (isHumanVsComputer && isWinner(player2)) {
+        if (isHumanVsComputer && isWinner(player2)) {
             System.out.println(player2.name + " is the winner!");
         } else if (!isHumanVsComputer && isWinner(player1)) {
             System.out.println(player1.name + " is the winner!");
@@ -148,20 +124,20 @@ public class Connect4Controller {
         if (isWinner(currentPlayer)) {
             System.out.println(currentPlayer.name + " is the winner!");
         }
-        if(gameOver()){
+        if (gameOver()) {
             System.out.println("Game Over !!");
-        };
+        }
     }
 
     /**
      * Checks if there are 4 circles of the same player in row
      *
-     * @param player
-     * @param col
-     * @param row
-     * @param dCol
-     * @param dRow
-     *  @return
+     * @param player player
+     * @param col column
+     * @param row row
+     * @param dCol dCol
+     * @param dRow dRow
+     *  @return true if the player has 4 in row, else false
      */
     private boolean checkFourInARow(Player player, int col, int row, int dCol, int dRow) {
         int count = 1;
@@ -175,9 +151,8 @@ public class Connect4Controller {
 
             Node node = board.getChildren().get(index);
 
-            if (node instanceof Circle) {
-                Circle circle = (Circle) node;
-                if (circle != null && circle.getFill().equals(targetColor)) {
+            if (node instanceof Circle circle) {
+                if (circle.getFill().equals(targetColor)) {
                     count++;
                 }
 
@@ -193,8 +168,8 @@ public class Connect4Controller {
 
     /**
      * Checks if player is winner of the game
-     * @param player
-     * @return
+     * @param player the player to check
+     * @return return true if the current player is winner, or false if he's not a winner
      */
     private boolean isWinner(Player player) {
         // Check rows
@@ -212,6 +187,7 @@ public class Connect4Controller {
 
         }
 
+        // Checks diagonals
         for (int row = 0; row < 7; row++) {
             if (checkFourInARow(player, 0, row, 1, 1)) {
                 return true;
@@ -234,7 +210,7 @@ public class Connect4Controller {
 
     /**
      * Checks if the board is full
-     * @return
+     * @return true if the board is full
      */
     private boolean isBoardFull() {
         return numberTokens == 42;
@@ -276,15 +252,14 @@ public class Connect4Controller {
     /**
      * Finding the last available circle in a column
      *
-     * @param columnIndex
-     * @return
+     * @param columnIndex the index of the column to be checked
+     * @return the last circle of the column
      */
     private Circle findLastEmptyCircle(int columnIndex) {
         Circle lastEmptyCircle = null;
         for (int rowIndex = 5; rowIndex >= 0; rowIndex--) {
             Node node = board.getChildren().get(rowIndex + columnIndex * 6);
-            if (node instanceof Circle) {
-                Circle circle = (Circle) node;
+            if (node instanceof Circle circle) {
                 if (circle.getFill().equals(Color.web("#aeaeae"))) {
                     lastEmptyCircle = circle;
                     break;
@@ -297,7 +272,7 @@ public class Connect4Controller {
     /**
      * This function is responsible for handling a player
      *
-     * @param lastEmptyCircle
+     * @param lastEmptyCircle the last empty circle in the column that will be affected
      */
     private void handleHumanMove(Circle lastEmptyCircle) {
         if (currentPlayer.id == 1) {
@@ -320,7 +295,7 @@ public class Connect4Controller {
         Circle lastEmptyCircle = findLastEmptyCircle(columnIndex);
 
         if (lastEmptyCircle != null) {
-            lastEmptyCircle.setFill(Color.RED); // Assuming computer's color is red
+            lastEmptyCircle.setFill(Color.RED);
             switchPlayer();
             playerTurn.setText(player1.name + " turn");
         } else {
@@ -331,7 +306,7 @@ public class Connect4Controller {
 
     /**
      * Shows the popup of the game over
-     * @param message
+     * @param message the message to print if the game is over
      */
     private void showGameOverPopup(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -348,7 +323,17 @@ public class Connect4Controller {
 
         alert.showAndWait().ifPresent(buttonType -> {
             if (buttonType == playAgainButton) {
-                restartButtonHandler();
+                currentPlayer = player1;
+                playerTurn.setText(player1.name + " turn");
+
+                for (Node node : board.getChildren()) {
+                    if (node instanceof Circle) {
+                        Circle circle = (Circle) node;
+                        circle.setFill(Color.web("#aeaeae"));
+                    }
+                }
+                numberTokens = 0;
+                System.out.println("Game restarted");
             } else {
                 System.exit(0);
             }
@@ -357,7 +342,7 @@ public class Connect4Controller {
 
     /**
      * method to know if the game is over and to show the popup of game over
-     * @return
+     * @return true if the game is over, or false if it is not over yet
      */
     private boolean gameOver() {
         if (isWinner(player1)) {
@@ -397,14 +382,12 @@ public class Connect4Controller {
 
     /**
      * Shows an alert with a title and a content
-     * @param title
-     * @param content
      */
-    private void showAlert(String title, String content) {
+    private void showColumnFullAlert() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
+        alert.setTitle("Full column");
         alert.setHeaderText(null);
-        alert.setContentText(content);
+        alert.setContentText("This column is full. Choose another column.");
         alert.initModality(Modality.APPLICATION_MODAL);
         alert.showAndWait();
     }
@@ -419,17 +402,20 @@ public class Connect4Controller {
         alert.setContentText("Connect 4 is a game for two players. Each player picks " +
                 "a color and drops discs into a vertical grid with seven columns and six rows." +
                 " The goal is to connect four discs of your color in a row, either vertically, " +
-                "horizontally, or diagonally, before your opponent does." +
-                " Players take turns dropping discs from the top, " +
+                "horizontally, or diagonally, before your opponent does.\n" +
+                "Players take turns dropping discs from the top, " +
                 "and the discs fall down to the lowest available spot in the chosen column.");
         alert.initModality(Modality.APPLICATION_MODAL);
         alert.showAndWait();
     }
 
+    /**
+     * Shows the popup of the confirmation of restarting a game
+     */
     private void showRestartConfirmation(){
         Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmationAlert.setTitle("Restart confirmation");
-        confirmationAlert.setContentText("Are you sur you want to restart ?");
+        confirmationAlert.setContentText("Are you sure you want to restart ?");
 
         ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
         ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.NO);
@@ -444,8 +430,7 @@ public class Connect4Controller {
                 playerTurn.setText(player1.name + " turn");
 
                 for (Node node : board.getChildren()) {
-                    if (node instanceof Circle) {
-                        Circle circle = (Circle) node;
+                    if (node instanceof Circle circle) {
                         circle.setFill(Color.web("#aeaeae"));
                     }
                 }
