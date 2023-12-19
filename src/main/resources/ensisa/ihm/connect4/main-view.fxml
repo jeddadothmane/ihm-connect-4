@@ -81,7 +81,7 @@
       <Pane prefHeight="123.0" prefWidth="1480.0" BorderPane.alignment="CENTER">
          <children>
             <Button fx:id="restart" layoutX="671.0" layoutY="25.0" mnemonicParsing="false" onAction="#restartButtonHandler" prefHeight="43.0" prefWidth="139.0" text="Restart" />
-            <Text fx:id="playerTurn" layoutX="291.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="player 1 turn" wrappingWidth="129.18359375">
+            <Text fx:id="playerTurn" layoutX="291.0" layoutY="50.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Player 1 turn" wrappingWidth="129.18359375">
                <font>
                   <Font size="18.0" />
                </font></Text>

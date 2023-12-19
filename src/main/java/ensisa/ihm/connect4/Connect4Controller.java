@@ -25,8 +25,6 @@ public class Connect4Controller {
     public Player player2 = new Player("Player 2", 2, Color.RED);
     private Player currentPlayer = player1;
     private boolean isHumanVsComputer = false;
-
-    private Timeline computerMoveTimeline;
     private int numberTokens = 0;
     @FXML
     Button restart = new Button();
@@ -45,7 +43,7 @@ public class Connect4Controller {
     public Button help;
 
     /**
-     * Initializes the games
+     * Initializes the game mode popup
      */
     @FXML
     public void initialize() {
@@ -127,7 +125,7 @@ public class Connect4Controller {
 
             if (isHumanVsComputer && !gameOver()) {
                 // Schedule computer move after a delay (e.g., 1 second)
-                computerMoveTimeline = new Timeline(new KeyFrame(
+                Timeline computerMoveTimeline = new Timeline(new KeyFrame(
                         Duration.seconds(0.5),
                         new EventHandler<ActionEvent>() {
                             @Override
@@ -274,6 +272,9 @@ public class Connect4Controller {
         showExitConfirmationDialog();
     }
 
+    /**
+     * Handles the help button
+     */
     @FXML
     public void helpButtonHandler() {
         showHelpDialog();
@@ -370,7 +371,7 @@ public class Connect4Controller {
     }
 
     /**
-     * method to know if the game is over and show the popup of game over
+     * method to know if the game is over and to show the popup of game over
      * @return
      */
     private boolean gameOver() {
@@ -408,6 +409,12 @@ public class Connect4Controller {
             }
         });
     }
+
+    /**
+     * Shows an alert with a title and a content
+     * @param title
+     * @param content
+     */
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
@@ -417,6 +424,9 @@ public class Connect4Controller {
         alert.showAndWait();
     }
 
+    /**
+     * Shows a popup that contains the rules of the connect4 game
+     */
     private void showHelpDialog() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Connect 4 Rules");
